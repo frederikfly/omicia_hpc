@@ -1,0 +1,25 @@
+[cluster testcluster]
+keyname = testcluster
+cluster_size = 1
+cluster_user = sgeadmin
+cluster_shell = bash
+node_image_id = ami-0db22764
+node_instance_type = t1.micro
+plugins = wgetter,rpminstaller,repoinstaller,pkginstaller,sge
+permissions = zookeeper.1, zookeeper.2, accumulo.monitor, hdfs, jobtracker, tablet_server, master_server, accumulo_logger, accumulo_tracer, datanode_data, datanode_metadata, tasktrackers, namenode_http_monitor, datanode_http_monitor, accumulo, accumulo_http_monitor
+
+[plugin wgetter]
+setup_class = centos.WgetPackages
+pkg_to_wget = "http://archive.cloudera.com/cdh4/one-click-install/redhat/5/x86_64/cloudera-cdh-4-0.x86_64.rpm"
+
+[plugin rpminstaller]
+setup_class = centos.RpmInstaller
+rpm_to_install = cloudera-cdh-4-0.x86_64.rpm
+
+[plugin repoinstaller]
+setup_class = centos.RepoConfigurator
+repo_to_install = "http://archive.cloudera.com/cdh4/redhat/5/x86_64/cdh/RPM-GPG-KEY-cloudera"
+
+[plugin pkginstaller]
+setup_class = centos.PackageInstaller
+pkg_to_install = hadoop-0.20-mapreduce-jobtracker

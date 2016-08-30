@@ -1,17 +1,18 @@
 # StarCluster
 
 ```bash
-$ yum install epel-release
-$ yum install python-pip
-$ yum install gcc
-$ yum install python-devel
-$ yum install libffi-devel
-$ yum install openssl-devel
+# Assumes Minimal/compute node CentOS7 install
+yum install epel-release
+yum install python-pip
+yum install gcc
+yum install python-devel
+yum install libffi-devel
+yum install openssl-devel
 
-$ pip install StarCluster
+pip install StarCluster
 
 
-$ starcluster help
+starcluster help
 select #2
 
 vi .starcluster/config

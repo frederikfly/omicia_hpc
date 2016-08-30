@@ -119,3 +119,90 @@ option to the 'start' command:
 This will start all 'stopped' nodes and reconfigure the
 cluster.
 ```
+
+# Create StarCluster compatible AMI
+
+
+ssh awscluster@lando.omicia-private.com
+
+Use current amazon image from https://aws.amazon.com/amazon-linux-ami/ 
+Select ami-2a69aa47 (PV EBS-Backed 64-bit, US East N. Virginia)
+
+``` bash
+starcluster start -o -s 1 -i t1.micro -n ami-2a69aa47 imagehost
+starcluster listclusters --show-ssh-status imagehost
+starcluster sshmaster imagehost -u ec2-user
+```
+
+In imagehost, enable root logins
+
+```bash
+ssh -i .ssh/om-aws-keypair.pem ec2-user@ec2-54-166-106-202.compute-1.amazonaws.com
+sudo sed -i.bak -e's/\#PermitRootLogin\ yes/PermitRootLogin\ without-password/g' /etc/ssh/sshd_config
+sudo sed -i.bak -e's/\#UseDNS\ yes/UseDNS\ no/g' /etc/ssh/sshd_config
+sudo cp -f /home/ec2-user/.ssh/authorized_keys /root/.ssh/authorized_keys
+sudo service sshd reload
+```
+
+Create custom script for key assignment
+```bash
+cat /etc/rc.d/rc.local 
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+touch /var/lock/subsys/local
+# update ec2-ami-tools
+wget http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.noarch.rpm && rpm -Uvh ec2-ami-tools.noarch.rpm
+# reset root password
+dd if=/dev/urandom count=50|md5sum|passwd --stdin root
+dd if=/dev/urandom count=50|md5sum|passwd --stdin ec2-user
+# update root ssh keys
+sleep 40
+if [ ! -d /root/.ssh ]; then
+    mkdir -p /root/.ssh
+    chmod 700 /root/.ssh
+fi
+wget http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key && cat openssh-key >>/root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys
+rm -f openssh-key
+```
+
+Test root login
+```bash
+ssh -i .ssh/om-aws-keypair.pem root@ec2-54-166-106-202.compute-1.amazonaws.com
+```
+
+Convert image to AMI
+```bash
+starcluster listclusters
+# Shows i-946db4a5 as image id we just created
+starcluster ebsimage i-946db4a5 starcluster-amazon_linux_pv-20160829
+>>> Removing private data...
+>>> Cleaning up SSH host keys
+>>> Cleaning up /var/log
+>>> Cleaning out /root
+>>> Cleaning up /tmp
+>>> Creating new EBS AMI...
+>>> New EBS AMI created: ami-cb4c23dc
+>>> Fetching block device mapping for ami-cb4c23dc 
+>>> Waiting for snapshot to complete: snap-8b918c10
+snap-8b918c10: |||||||||||||||||||||||||||||||||||||||||||||100% Time: 00:04:19
+>>> Waiting for ami-cb4c23dc to become available... 
+>>> create_image took 5.298 mins
+>>> Your new AMI id is: ami-cb4c23dc
+```
+
+Cleanup
+```bash
+starcluster terminate imagehost
+```
+
+Test new image
+```bash
+starcluster start -o -s 1 -i t1.micro -n ami-cb4c23dc imagehost
+starcluster sshmaster imagehost
+# And terminate
+starcluster terminate imagehost
+```

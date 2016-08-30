@@ -125,8 +125,9 @@ cluster.
 
 ssh awscluster@lando.omicia-private.com
 
-Use current amazon image from https://aws.amazon.com/amazon-linux-ami/ 
-Select ami-2a69aa47 (PV EBS-Backed 64-bit, US East N. Virginia)
+Use current amazon image from [Amazon Linux AMI](https://aws.amazon.com/amazon-linux-ami/)
+
+In this example, select ami-2a69aa47 (PV EBS-Backed 64-bit, US East N. Virginia)
 
 ``` bash
 starcluster start -o -s 1 -i t1.micro -n ami-2a69aa47 imagehost
@@ -134,7 +135,7 @@ starcluster listclusters --show-ssh-status imagehost
 starcluster sshmaster imagehost -u ec2-user
 ```
 
-In imagehost, enable root logins
+In imagehost, enable root logins (find address ec2-54-166-106-202.compute-1.amazonaws.com from AWS console)
 
 ```bash
 ssh -i .ssh/om-aws-keypair.pem ec2-user@ec2-54-166-106-202.compute-1.amazonaws.com

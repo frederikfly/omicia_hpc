@@ -1,40 +1,40 @@
 # StarCluster
 
-$ yum install epel-release
-$ yum install python-pip
-$ yum install gcc
-$ yum install python-devel
-$ yum install libffi-devel
-$ yum install openssl-devel
+    $ yum install epel-release
+    $ yum install python-pip
+    $ yum install gcc
+    $ yum install python-devel
+    $ yum install libffi-devel
+    $ yum install openssl-devel
 
-$ pip install StarCluster
+    $ pip install StarCluster
 
 
-starcluster help
-select #2
+    $ starcluster help
+    $ select #2
 
-vi .starcluster/config
-Enter AWS keys in empty fields:
-$ AWS_ACCESS_KEY_ID = # add value
-$ AWS_SECRET_ACCESS_KEY = # add value
+    $ vi .starcluster/config
+    $ # Enter AWS keys in empty fields:
+    $ AWS_ACCESS_KEY_ID = # add value
+    $ AWS_SECRET_ACCESS_KEY = # add value
 
-Add omicia key pair
-Note: [key is no a free-form entry - it must match the filename in KEY_LOCATION
-$ [key om-aws-keypair]
-$ KEY_LOCATION=~/.ssh/om-aws-keypair.pem
+    $ # Add omicia key pair
+    $ # Note: [key is no a free-form entry - it must match the filename in KEY_LOCATION
+    $ [key om-aws-keypair]
+    $ KEY_LOCATION=~/.ssh/om-aws-keypair.pem
 
-Use it in smallcluster
-$ KEYNAME = om-aws-keypair
+    $ Use it in smallcluster
+    $ KEYNAME = om-aws-keypair
 
 # Useful commands
 
-$ starcluster start <name>
-$ starcluster terminate <name>
+    $ starcluster start <name>
+    $ starcluster terminate <name>
 
-$ starcluster sshmaster mycluster
+    $ starcluster sshmaster mycluster
 
-$ starcluster put mycluster /path/to/local/file/or/dir /remote/path/
-$ starcluster get mycluster /path/to/remote/file/or/dir /local/path/
+    $ starcluster put mycluster /path/to/local/file/or/dir /remote/path/
+    $ starcluster get mycluster /path/to/remote/file/or/dir /local/path/
 
 
 

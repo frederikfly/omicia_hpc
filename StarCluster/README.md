@@ -147,7 +147,7 @@ sudo service sshd reload
 
 Create custom script for key assignment
 ```bash
-cat /etc/rc.d/rc.local 
+cat > /etc/rc.d/rc.local 
 #!/bin/sh
 #
 # This script will be executed *after* all the other init scripts.
@@ -155,6 +155,7 @@ cat /etc/rc.d/rc.local
 # want to do the full Sys V style init stuff.
 
 touch /var/lock/subsys/local
+
 # update ec2-ami-tools
 wget http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools.noarch.rpm && rpm -Uvh ec2-ami-tools.noarch.rpm
 # reset root password
